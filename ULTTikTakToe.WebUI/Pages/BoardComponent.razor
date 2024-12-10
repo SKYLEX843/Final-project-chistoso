@@ -1,0 +1,43 @@
+﻿@code {
+    [Parameter] public string[,] Grid { get; set; }
+    [Parameter] public EventCallback<(int row, int col)> OnCellClick { get; set; }
+
+    private void HandleClick(int row, int col)
+    {
+        if (Grid[row, col] == null)
+        {
+            OnCellClick.InvokeAsync((row, col));
+        }
+    }
+}
+
+<div class="board">
+    @for (int row = 0; row < 3; row++)
+    {
+        <div class="row">
+            @for (int col = 0; col < 3; col++)
+            {
+                <button class="cell" @onclick="() => HandleClick(row, col)">
+                    @Grid[row, col]
+                </button>
+            }
+        </div>
+    }
+</div>
+
+<style>
+    .board {
+        display: grid;
+        gap: 5px;
+    }
+
+    .row {
+        display: flex;
+    }
+
+    .cell {
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
+    }
+</style>

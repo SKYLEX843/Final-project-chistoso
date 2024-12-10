@@ -1,0 +1,61 @@
+﻿@page "/game"
+@using  ULTTikTakToe.Logic;
+
+@inject IJSRuntime JSRuntime
+
+@code {
+    GameService gameService = new GameService();
+    private void MakeMove(int row, int col)
+    {
+        if (gameService.GetWinner() == null)
+        {
+            gameService.MakeMove(row, col);
+
+            if (gameService.GetWinner() != null)
+            {
+                JSRuntime.InvokeVoidAsync("alert", $"Player {gameService.GetWinner()} wins!");
+            }
+            else if (gameService.Game.Board.IsFull)
+            {
+                JSRuntime.InvokeVoidAsync("alert", "It's a draw!");
+            }
+        }
+    }
+
+    private string GetCellContent(int row, int col) => gameService.GetCellContent(row, col);
+
+    private string CurrentPlayer => gameService.Game.CurrentPlayer;
+}
+
+<h3>Tic Tac Toe</h3>
+<p>Current Player: @CurrentPlayer</p>
+<table class="board">
+    @for (int row = 0; row < 3; row++)
+    {
+        <tr>
+            @for (int col = 0; col < 3; col++)
+            {
+                <td @onclick="() => MakeMove(row, col)">
+                    @GetCellContent(row, col)
+                </td>
+            }
+        </tr>
+    }
+</table>
+
+<style>
+    .board {
+        border-collapse: collapse;
+        margin: 20px;
+    }
+
+    .board td {
+        width: 60px;
+        height: 60px;
+        text-align: center;
+        vertical-align: middle;
+        border: 1px solid black;
+        font-size: 24px;
+        cursor: pointer;
+    }
+</style>
